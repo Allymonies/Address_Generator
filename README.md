@@ -5,6 +5,6 @@ Usage: java -jar <Addr gen file.jar> <Threads> <Words to search for seperated by
 
 Planned features:
 
-1. Only search from the beginning
+1. Only search from the beginning of the address for matches.
 
 2. Output result to a file.
