@@ -6,6 +6,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 public class AddressGenerator {
 	static final Object hDone = new Object();
@@ -58,6 +59,16 @@ public class AddressGenerator {
 					if (checkArray(toFind, curAddr)) {
 						System.out.println(tName + ": Found " + curAddr + " From " + thash);
 						System.out.println(tName + " Stopping.");
+						Writer writer = null;
+						
+						try {
+							writer = new BufferedWriter(new OutputStreamWriter( new FileOutputStream("addrGenResult.txt"), "utf-8"));
+							writer.write(curAddr + " from password: " + thash);
+						} catch (IOException ex) {
+							
+						} finally {
+							try {writer.close();} catch (Exception ex) {}
+						}
 						i = 49999;
 						setSearch(false);
 					}
