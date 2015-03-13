@@ -1,7 +1,7 @@
 # Address_Generator
 A java address generator.
 
-Usage: java -jar <Addr gen file.jar> <Threads> <Words to search for seperated by spaces>
+Usage: java -jar \<Addr gen file.jar> \<Threads> \<Words to search for seperated by spaces>
 
 Planned features:
 
