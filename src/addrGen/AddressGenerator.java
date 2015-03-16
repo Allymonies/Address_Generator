@@ -36,15 +36,19 @@ public class AddressGenerator {
 	static class MineThread extends Thread {
 		private String tName;
 		private List<String> args;
-		public MineThread(String tName, List<String> args) {
+		private int addrs;
+		public MineThread(String tName, List<String> args, int numAddrs) {
 			this.tName = tName;
 			this.args = args;
+			this.addrs = numAddrs;
 		}
 		
 		public void run() {
 			System.out.println(tName + " Started");
 			String thash;
 			String curAddr;
+			int numFound;
+			numFound = 0;
 			List<String> toFind = this.args;
 			String rchars = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()";
 			boolean search = true;
@@ -58,19 +62,17 @@ public class AddressGenerator {
 					
 					if (checkArray(toFind, curAddr)) {
 						System.out.println(tName + ": Found " + curAddr + " From " + thash);
-						System.out.println(tName + " Stopping.");
-						Writer writer = null;
-						
-						try {
-							writer = new BufferedWriter(new OutputStreamWriter( new FileOutputStream("addrGenResult.txt"), "utf-8"));
-							writer.write(curAddr + " from password: " + thash);
-						} catch (IOException ex) {
-							
-						} finally {
-							try {writer.close();} catch (Exception ex) {}
+						try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("addrGenResults.txt", true)))) {
+						    out.println(curAddr + " from password: " + thash);
+						}catch (IOException e) {
+						    //exception handling left as an exercise for the reader
 						}
-						i = 49999;
-						setSearch(false);
+						numFound++;
+						if (numFound >= this.addrs) {
+							System.out.println("Found the desired amount of addresses");
+							setSearch(false);
+						}
+						//setSearch(false);
 					}
 					i++;
 				}
@@ -83,9 +85,10 @@ public class AddressGenerator {
 	public static void main(String[] args) {
 		int numConvert = 0;
 		int numThreads = Integer.parseInt(args[0]);
+		int addrsToFind = Integer.parseInt(args[1]);
 		List<String> tArgs = new ArrayList<String>();
 		for (String findWord : args) {
-			if (numConvert > 0) {
+			if (numConvert > 1) {
 				tArgs.add(findWord);
 			}
 			numConvert++;
@@ -94,7 +97,7 @@ public class AddressGenerator {
 		List<MineThread> mineThreads = new ArrayList<MineThread>();
 	    for (int i = 0; i < numThreads; i++)
 	    {
-	    	mineThreads.add(new MineThread("Thread" + String.valueOf(i),tArgs));
+	    	mineThreads.add(new MineThread("Thread" + String.valueOf(i),tArgs,addrsToFind));
 	    	mineThreads.get(i).start();
 	    }
 	    DisplayThread displayThread = new DisplayThread("Display");
